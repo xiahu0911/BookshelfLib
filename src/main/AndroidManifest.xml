@@ -1,0 +1,11 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.flyersoft.source">
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <application>
+<!--        <activity android:name="com.flyersoft.source.view.source.ActivitySourceEditor"></activity>-->
+<!--        <activity android:name="com.flyersoft.source.view.activity.ActivityFind"></activity>-->
+    </application>
+
+</manifest>

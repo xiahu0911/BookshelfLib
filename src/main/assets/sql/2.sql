@@ -1,0 +1,1 @@
+alter table BookSource ADD COLUMN "from" int(3);

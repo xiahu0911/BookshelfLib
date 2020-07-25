@@ -1,0 +1,1 @@
+alter table Book ADD COLUMN "she" VARCHAR(10);

@@ -1,0 +1,63 @@
+apply plugin: 'com.android.library'
+apply plugin: 'org.greenrobot.greendao' // apply plugin
+
+android {
+    compileSdkVersion 28
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [AROUTER_MODULE_NAME: project.getName()]
+            }
+        }
+    }
+}
+
+greendao {
+    schemaVersion 1
+    daoPackage 'com.flyersort.source.gen'
+    targetGenDir 'src/main/java'
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support:design:28.0.0'
+//    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    implementation 'com.android.support:recyclerview-v7:28.0.0'
+    implementation 'com.android.support:support-dynamic-animation:28.0.0'
+
+    //Gson 库
+    implementation 'com.google.code.gson:gson:2.6.2'
+//    implementation fileTree ('/Applications/Android Studio.app/Contents/jre/jdk/Contents/Home/jre/lib/rt.jar')
+    //下面两个是RxJava 和RxAndroid
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.9'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+    //retrofit2
+    implementation 'com.squareup.retrofit2:converter-gson:2.6.0'
+    implementation 'com.jakewharton.rxbinding2:rxbinding:2.0.0'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.6.0'
+    //消息中心
+    implementation 'org.greenrobot:eventbus:3.1.1'
+    //ARouter
+    implementation 'com.alibaba:arouter-api:1.5.0'
+    annotationProcessor 'com.alibaba:arouter-compiler:1.2.2'
+    //解析器
+    implementation 'org.jsoup:jsoup:1.11.1'
+    //数据库
+    implementation 'org.greenrobot:greendao:3.3.0' // add library
+    annotationProcessor 'com.amitshekhar.android:debug-db:1.0.1'
+    //js
+    //noinspection GradleDependency
+//    implementation 'io.apisense:rhino-android:1.0'
+    implementation 'com.github.gedoor:rhino-android:1.3'
+
+    //J_SOUP
+    implementation 'org.jsoup:jsoup:1.13.1'
+    implementation 'cn.wanghaomiao:JsoupXpath:2.3.2'
+    implementation 'com.jayway.jsonpath:json-path:2.4.0'
+}
