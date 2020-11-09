@@ -10,7 +10,6 @@ import org.greenrobot.greendao.internal.DaoConfig;
 
 import com.flyersoft.source.bean.BookChapterBean;
 import com.flyersoft.source.bean.BookContentBean;
-import com.flyersoft.source.bean.BookInfoBean;
 import com.flyersoft.source.bean.BookShelfBean;
 import com.flyersoft.source.bean.BookSource;
 import com.flyersoft.source.bean.CookieBean;
@@ -18,7 +17,6 @@ import com.flyersoft.source.bean.SearchBookBean;
 
 import com.flyersort.source.gen.BookChapterBeanDao;
 import com.flyersort.source.gen.BookContentBeanDao;
-import com.flyersort.source.gen.BookInfoBeanDao;
 import com.flyersort.source.gen.BookShelfBeanDao;
 import com.flyersort.source.gen.BookSourceDao;
 import com.flyersort.source.gen.CookieBeanDao;
@@ -35,7 +33,6 @@ public class DaoSession extends AbstractDaoSession {
 
     private final DaoConfig bookChapterBeanDaoConfig;
     private final DaoConfig bookContentBeanDaoConfig;
-    private final DaoConfig bookInfoBeanDaoConfig;
     private final DaoConfig bookShelfBeanDaoConfig;
     private final DaoConfig bookSourceDaoConfig;
     private final DaoConfig cookieBeanDaoConfig;
@@ -43,7 +40,6 @@ public class DaoSession extends AbstractDaoSession {
 
     private final BookChapterBeanDao bookChapterBeanDao;
     private final BookContentBeanDao bookContentBeanDao;
-    private final BookInfoBeanDao bookInfoBeanDao;
     private final BookShelfBeanDao bookShelfBeanDao;
     private final BookSourceDao bookSourceDao;
     private final CookieBeanDao cookieBeanDao;
@@ -59,9 +55,6 @@ public class DaoSession extends AbstractDaoSession {
         bookContentBeanDaoConfig = daoConfigMap.get(BookContentBeanDao.class).clone();
         bookContentBeanDaoConfig.initIdentityScope(type);
 
-        bookInfoBeanDaoConfig = daoConfigMap.get(BookInfoBeanDao.class).clone();
-        bookInfoBeanDaoConfig.initIdentityScope(type);
-
         bookShelfBeanDaoConfig = daoConfigMap.get(BookShelfBeanDao.class).clone();
         bookShelfBeanDaoConfig.initIdentityScope(type);
 
@@ -76,7 +69,6 @@ public class DaoSession extends AbstractDaoSession {
 
         bookChapterBeanDao = new BookChapterBeanDao(bookChapterBeanDaoConfig, this);
         bookContentBeanDao = new BookContentBeanDao(bookContentBeanDaoConfig, this);
-        bookInfoBeanDao = new BookInfoBeanDao(bookInfoBeanDaoConfig, this);
         bookShelfBeanDao = new BookShelfBeanDao(bookShelfBeanDaoConfig, this);
         bookSourceDao = new BookSourceDao(bookSourceDaoConfig, this);
         cookieBeanDao = new CookieBeanDao(cookieBeanDaoConfig, this);
@@ -84,7 +76,6 @@ public class DaoSession extends AbstractDaoSession {
 
         registerDao(BookChapterBean.class, bookChapterBeanDao);
         registerDao(BookContentBean.class, bookContentBeanDao);
-        registerDao(BookInfoBean.class, bookInfoBeanDao);
         registerDao(BookShelfBean.class, bookShelfBeanDao);
         registerDao(BookSource.class, bookSourceDao);
         registerDao(CookieBean.class, cookieBeanDao);
@@ -94,7 +85,6 @@ public class DaoSession extends AbstractDaoSession {
     public void clear() {
         bookChapterBeanDaoConfig.clearIdentityScope();
         bookContentBeanDaoConfig.clearIdentityScope();
-        bookInfoBeanDaoConfig.clearIdentityScope();
         bookShelfBeanDaoConfig.clearIdentityScope();
         bookSourceDaoConfig.clearIdentityScope();
         cookieBeanDaoConfig.clearIdentityScope();
@@ -107,10 +97,6 @@ public class DaoSession extends AbstractDaoSession {
 
     public BookContentBeanDao getBookContentBeanDao() {
         return bookContentBeanDao;
-    }
-
-    public BookInfoBeanDao getBookInfoBeanDao() {
-        return bookInfoBeanDao;
     }
 
     public BookShelfBeanDao getBookShelfBeanDao() {

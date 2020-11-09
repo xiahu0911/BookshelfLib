@@ -160,7 +160,7 @@ public class BaseModel {
                     public void run() {
                         final Runnable r = this;
                         Runnable timeoutRunnable;
-                        final WebView webView = new WebView(SourceApplication.application);
+                        final WebView webView = new WebView(SourceApplication.INSTANCE);
                         webView.getSettings().setJavaScriptEnabled(true);
                         webView.getSettings().setUserAgentString(analyzeUrl.getHeaderMap().get("User-Agent"));
                         final CookieManager cookieManager = CookieManager.getInstance();

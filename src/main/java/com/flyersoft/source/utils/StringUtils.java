@@ -1,9 +1,10 @@
 package com.flyersoft.source.utils;
 
 import android.annotation.SuppressLint;
-import android.support.annotation.StringRes;
 import android.text.TextUtils;
 import android.util.Base64;
+
+import androidx.annotation.StringRes;
 
 import com.flyersoft.source.SourceApplication;
 
@@ -16,8 +17,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static android.text.TextUtils.isEmpty;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class StringUtils {
@@ -99,11 +98,11 @@ public class StringUtils {
     }
 
     public static String getString(@StringRes int id) {
-        return SourceApplication.application.getResources().getString(id);
+        return SourceApplication.INSTANCE.getResources().getString(id);
     }
 
     public static String getString(@StringRes int id, Object... formatArgs) {
-        return SourceApplication.application.getString(id, formatArgs);
+        return SourceApplication.INSTANCE.getString(id, formatArgs);
     }
 
     /**
@@ -327,7 +326,7 @@ public class StringUtils {
     }
 
     public static String getBaseUrl(String url) {
-        if (url == null || !url.startsWith("http")) return null;
+        if (url == null || !url.startsWith("http")) return "";
         int index = url.indexOf("/", 9);
         if (index == -1) {
             return url;
@@ -359,7 +358,7 @@ public class StringUtils {
     }
 
     public static String removeUTFCharacters(String data) {
-        if (data == null) return null;
+        if (data == null) return "";
         Pattern p = Pattern.compile("\\\\u(\\p{XDigit}{4})");
         Matcher m = p.matcher(data);
         StringBuffer buf = new StringBuffer(data.length());
@@ -379,6 +378,14 @@ public class StringUtils {
                 .replaceAll("\\s*\\n+\\s*", "\n　　")// 移除空行,并增加段前缩进2个汉字
                 .replaceAll("^[\\n\\s]+", "　　")//移除开头空行,并增加段前缩进2个汉字
                 .replaceAll("[\\n\\s]+$", "");//移除尾部空行
+    }
+
+    public static String formatListText(String html) {
+        if (TextUtils.isEmpty(html)) return "";
+        return formatHtml(html)
+                .replace('\n', ' ')
+                .replace((char)12288, ' ')
+                .replaceAll(" +", " ");
     }
 
 

@@ -1,12 +1,16 @@
 //Copyright (c) 2017. 章钦豪. All rights reserved.
 package com.flyersoft.source.bean;
 
+import com.flyersoft.source.utils.JsonUtils;
 import com.google.gson.Gson;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Transient;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -17,35 +21,39 @@ public class BookChapterBean implements Cloneable {
     private String tag;
     private String noteUrl; //对应BookInfoBean noteUrl;
 
-    private int durChapterIndex;  //当前章节数
+    private int index;  //当前章节数
     @Id
-    private String durChapterUrl;  //当前章节对应的文章地址
-    private String durChapterName;  //当前章节名称
+    private String url;  //当前章节对应的文章地址
+    private String title;  //当前章节名称
 
     //章节内容在文章中的起始位置(本地)
     private Long start;
     //章节内容在文章中的终止位置(本地)
     private Long end;
+    @Transient
+    private String variable;
+    @Transient
+    private HashMap<String, String> variableMap = new HashMap<>(2);
 
     public BookChapterBean() {
     }
 
-    @Generated(hash = 304828234)
-    public BookChapterBean(String tag, String noteUrl, int durChapterIndex, String durChapterUrl, String durChapterName,
-                           Long start, Long end) {
-        this.tag = tag;
-        this.noteUrl = noteUrl;
-        this.durChapterIndex = durChapterIndex;
-        this.durChapterUrl = durChapterUrl;
-        this.durChapterName = durChapterName;
-        this.start = start;
-        this.end = end;
-    }
-
     public BookChapterBean(String tag, String durChapterName, String durChapterUrl) {
         this.tag = tag;
-        this.durChapterName = durChapterName;
-        this.durChapterUrl = durChapterUrl;
+        this.title = durChapterName;
+        this.url = durChapterUrl;
+    }
+
+    @Generated(hash = 1729848268)
+    public BookChapterBean(String tag, String noteUrl, int index, String url, String title,
+            Long start, Long end) {
+        this.tag = tag;
+        this.noteUrl = noteUrl;
+        this.index = index;
+        this.url = url;
+        this.title = title;
+        this.start = start;
+        this.end = end;
     }
 
     @Override
@@ -63,7 +71,7 @@ public class BookChapterBean implements Cloneable {
     public boolean equals(Object obj) {
         if (obj instanceof BookChapterBean) {
             BookChapterBean bookChapterBean = (BookChapterBean) obj;
-            return Objects.equals(bookChapterBean.durChapterUrl, durChapterUrl);
+            return Objects.equals(bookChapterBean.url, url);
         } else {
             return false;
         }
@@ -71,10 +79,10 @@ public class BookChapterBean implements Cloneable {
 
     @Override
     public int hashCode() {
-        if (durChapterUrl == null) {
+        if (url == null) {
             return 0;
         }
-        return durChapterUrl.hashCode();
+        return url.hashCode();
     }
 
     public String getTag() {
@@ -85,28 +93,28 @@ public class BookChapterBean implements Cloneable {
         this.tag = tag;
     }
 
-    public String getDurChapterName() {
-        return this.durChapterName;
+    public String getTitle() {
+        return this.title;
     }
 
-    public void setDurChapterName(String durChapterName) {
-        this.durChapterName = durChapterName;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public String getDurChapterUrl() {
-        return this.durChapterUrl;
+    public String getUrl() {
+        return this.url;
     }
 
-    public void setDurChapterUrl(String durChapterUrl) {
-        this.durChapterUrl = durChapterUrl;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
-    public int getDurChapterIndex() {
-        return this.durChapterIndex;
+    public int getIndex() {
+        return this.index;
     }
 
-    public void setDurChapterIndex(int durChapterIndex) {
-        this.durChapterIndex = durChapterIndex;
+    public void setIndex(int index) {
+        this.index = index;
     }
 
     public String getNoteUrl() {
@@ -133,4 +141,27 @@ public class BookChapterBean implements Cloneable {
         this.end = end;
     }
 
+    public String getVariable() {
+        return variable;
+    }
+
+    public void setVariable(String variable) {
+        this.variable = variable;
+    }
+
+    public void putVariable(String key, String value) {
+        variableMap.put(key, value);
+        variable = JsonUtils.objectToJson(variableMap);
+    }
+
+    public Map<String, String> getVariableMap() {
+        if (variableMap == null) {
+            Map<String, String> stringObjectMap = JsonUtils.gsonToMaps(variable);
+            if (stringObjectMap == null) {
+                return new HashMap<String, String>();
+            }
+            return stringObjectMap;
+        }
+        return variableMap;
+    }
 }

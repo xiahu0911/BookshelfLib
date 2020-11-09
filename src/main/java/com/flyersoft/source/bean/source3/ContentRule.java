@@ -11,6 +11,7 @@ public class ContentRule {
     private String nextContentUrl;
     private String webJs;
     private String sourceRegex;
+    private String replaceRegex;
 
     public String getContent() {
         return content;
@@ -42,5 +43,13 @@ public class ContentRule {
 
     public void setSourceRegex(String sourceRegex) {
         this.sourceRegex = sourceRegex;
+    }
+
+    public String getReplaceRegex() {
+        return replaceRegex;
+    }
+
+    public void setReplaceRegex(String replaceRegex) {
+        this.replaceRegex = replaceRegex;
     }
 }

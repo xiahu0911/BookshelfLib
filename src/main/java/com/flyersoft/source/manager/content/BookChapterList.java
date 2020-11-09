@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import io.reactivex.Emitter;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -257,9 +256,9 @@ public class BookChapterList {
             firstChapter = chapterBeans.get(0);
         }
         Loger.showLog(tag, "┌获取章节名称");
-        Loger.showLog(tag, "└" + firstChapter.getDurChapterName());
+        Loger.showLog(tag, "└" + firstChapter.getTitle());
         Loger.showLog(tag, "┌获取章节网址");
-        Loger.showLog(tag, "└" + firstChapter.getDurChapterUrl());
+        Loger.showLog(tag, "└" + firstChapter.getUrl());
         return new WebChapterBean(chapterBeans, new LinkedHashSet<>(nextUrlList));
     }
 

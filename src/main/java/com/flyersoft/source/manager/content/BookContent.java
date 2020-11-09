@@ -11,7 +11,6 @@ import com.flyersoft.source.manager.analyzeRule.AnalyzeRule;
 import com.flyersoft.source.manager.analyzeRule.AnalyzeUrl;
 import com.flyersoft.source.utils.Loger;
 import com.flyersoft.source.utils.NetworkUtils;
-import com.flyersoft.source.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,16 +57,16 @@ public class BookContent {
                     return;
                 }
                 if (TextUtils.isEmpty(baseUrl)) {
-                    baseUrl = NetworkUtils.getAbsoluteURL(bookShelfBean.getBookInfoBean().getChapterUrl(), chapterBean.getDurChapterUrl());
+                    baseUrl = NetworkUtils.getAbsoluteURL(bookShelfBean.getBookInfoBean().getChapterUrl(), chapterBean.getUrl());
                 }
                 Loger.showLog(tag, "┌成功获取正文页");
                 Loger.showLog(tag, "└" + baseUrl);
                 BookContentBean bookContentBean = new BookContentBean();
-                bookContentBean.setDurChapterIndex(chapterBean.getDurChapterIndex());
-                bookContentBean.setDurChapterUrl(chapterBean.getDurChapterUrl());
+                bookContentBean.setDurChapterIndex(chapterBean.getIndex());
+                bookContentBean.setDurChapterUrl(chapterBean.getUrl());
                 bookContentBean.setTag(tag);
                 AnalyzeRule analyzer = new AnalyzeRule(bookShelfBean);
-                WebContentBean webContentBean = analyzeBookContent(analyzer, s, chapterBean.getDurChapterUrl(), baseUrl);
+                WebContentBean webContentBean = analyzeBookContent(analyzer, s, chapterBean.getUrl(), baseUrl);
                 bookContentBean.setDurChapterContent(webContentBean.content);
 
                 /*
@@ -75,7 +74,7 @@ public class BookContent {
                  */
                 if (!TextUtils.isEmpty(webContentBean.nextUrl)) {
                     List<String> usedUrlList = new ArrayList<>();
-                    usedUrlList.add(chapterBean.getDurChapterUrl());
+                    usedUrlList.add(chapterBean.getUrl());
                     BookChapterBean nextChapter = null;
                     if (nextChapterBean != null) {
                         nextChapter = nextChapterBean;
@@ -90,7 +89,7 @@ public class BookContent {
 
                     while (!TextUtils.isEmpty(webContentBean.nextUrl) && !usedUrlList.contains(webContentBean.nextUrl)) {
                         usedUrlList.add(webContentBean.nextUrl);
-                        if (nextChapter != null && NetworkUtils.getAbsoluteURL(baseUrl, webContentBean.nextUrl).equals(NetworkUtils.getAbsoluteURL(baseUrl, nextChapter.getDurChapterUrl()))) {
+                        if (nextChapter != null && NetworkUtils.getAbsoluteURL(baseUrl, webContentBean.nextUrl).equals(NetworkUtils.getAbsoluteURL(baseUrl, nextChapter.getUrl()))) {
                             break;
                         }
                         if (isTest) {
@@ -126,7 +125,9 @@ public class BookContent {
         if (ruleBookContent.equals("all") || ruleBookContent.contains("@all")) {
             webContentBean.content = analyzer.getString(ruleBookContent);
         } else {
-            webContentBean.content = StringUtils.formatHtml(analyzer.getString(ruleBookContent));
+            String html = analyzer.getString(ruleBookContent);
+//            webContentBean.content = StringUtils.formatHtml(html);
+            webContentBean.content = html; //todo 保存章节html格式, 支持原排版和图片
         }
         Loger.showLog(tag, "└" + webContentBean.content);
         String nextUrlRule = bookSourceBean.getRuleContentUrlNext();

@@ -42,7 +42,7 @@ public class NetworkUtils {
     }
 
     public static boolean isNetWorkAvailable() {
-        ConnectivityManager manager = (ConnectivityManager) SourceApplication.application
+        ConnectivityManager manager = (ConnectivityManager) SourceApplication.INSTANCE
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
         if (manager != null) {
             NetworkInfo info = manager.getActiveNetworkInfo();

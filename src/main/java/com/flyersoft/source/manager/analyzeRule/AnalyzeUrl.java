@@ -1,7 +1,7 @@
 package com.flyersoft.source.manager.analyzeRule;
 
 import android.annotation.SuppressLint;
-import android.support.annotation.Keep;
+import androidx.annotation.Keep;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -250,7 +250,7 @@ public class AnalyzeUrl {
         url = NetworkUtils.getAbsoluteURL(baseUrl, ruleUrl);
         Log.i("MR2", "url: " + url);
         host = StringUtils.getBaseUrl(url);
-        urlPath = url.substring(host.length());
+        urlPath = url.substring(host.length()).replace("//", "/");
     }
 
     /**

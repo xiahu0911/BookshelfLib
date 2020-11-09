@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.text.Html;
 import android.text.TextUtils;
 
+import com.flyersoft.source.utils.JsonUtils;
 import com.google.gson.Gson;
 
 import org.greenrobot.greendao.annotation.Entity;
@@ -13,13 +14,15 @@ import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Transient;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 /**
  * 书本信息
  */
-@Entity
-public class BookInfoBean implements Cloneable {
+//@Entity
+public class BookInfoBean implements Cloneable, BaseBookBean {
 
     private String name; //小说名
     private String tag;
@@ -33,17 +36,25 @@ public class BookInfoBean implements Cloneable {
     private String origin; //来源
     private String charset;//编码
     private String bookSourceType;
+    private String kind;
+    private String wordCount;
+    private String latestChapterTitle;
+    private int totalChapterNum;//章节数
     @Transient
     private String bookInfoHtml;
     @Transient
     private String chapterListHtml;
+    @Transient
+    private String variable = "";
+    @Transient
+    private Map<String, String> variableMap = new HashMap<>();
 
     public BookInfoBean() {
     }
 
-    @Generated(hash = 906814482)
-    public BookInfoBean(String name, String tag, String noteUrl, String chapterUrl, long finalRefreshData, String coverUrl, String author, String introduce,
-                        String origin, String charset, String bookSourceType) {
+    @Generated(hash = 1274114508)
+    public BookInfoBean(String name, String tag, String noteUrl, String chapterUrl, long finalRefreshData, String coverUrl, String author, String introduce, String origin,
+            String charset, String bookSourceType, String kind, String wordCount, String latestChapterTitle) {
         this.name = name;
         this.tag = tag;
         this.noteUrl = noteUrl;
@@ -55,6 +66,9 @@ public class BookInfoBean implements Cloneable {
         this.origin = origin;
         this.charset = charset;
         this.bookSourceType = bookSourceType;
+        this.kind = kind;
+        this.wordCount = wordCount;
+        this.latestChapterTitle = latestChapterTitle;
     }
 
     @Override
@@ -90,6 +104,33 @@ public class BookInfoBean implements Cloneable {
 
     public void setNoteUrl(String noteUrl) {
         this.noteUrl = noteUrl;
+    }
+
+    @Override
+    public String getVariable() {
+        return variable;
+    }
+
+    @Override
+    public void setVariable(String variable) {
+        this.variable = variable;
+        variableMap = JsonUtils.gsonToMaps(variable);
+    }
+
+    public void setVariableMap(Map<String, String> variableMap) {
+        this.variableMap = variableMap;
+        variable = JsonUtils.objectToJson(variableMap);
+    }
+
+    @Override
+    public void putVariable(String key, String value) {
+        variableMap.put(key, value);
+        variable = JsonUtils.objectToJson(variableMap);
+    }
+
+    @Override
+    public Map<String, String> getVariableMap() {
+        return variableMap;
     }
 
     public String getChapterUrl() {
@@ -216,5 +257,37 @@ public class BookInfoBean implements Cloneable {
 
     public void setChapterListHtml(String chapterListHtml) {
         this.chapterListHtml = chapterListHtml;
+    }
+
+    public String getKind() {
+        return this.kind;
+    }
+
+    public void setKind(String kind) {
+        this.kind = kind;
+    }
+
+    public String getWordCount() {
+        return this.wordCount;
+    }
+
+    public void setWordCount(String wordCount) {
+        this.wordCount = wordCount;
+    }
+
+    public String getLatestChapterTitle() {
+        return this.latestChapterTitle;
+    }
+
+    public int getTotalChapterNum() {
+        return totalChapterNum;
+    }
+
+    public void setTotalChapterNum(int totalChapterNum) {
+        this.totalChapterNum = totalChapterNum;
+    }
+
+    public void setLatestChapterTitle(String latestChapterTitle) {
+        this.latestChapterTitle = latestChapterTitle;
     }
 }

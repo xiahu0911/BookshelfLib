@@ -1,11 +1,13 @@
 package com.flyersoft.source.bean;
 
+import com.flyersoft.source.utils.JsonUtils;
 import com.google.gson.Gson;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Transient;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -26,9 +28,8 @@ public class SearchBookBean implements BaseBookBean {
     private String lastChapter;
     private String introduce; //简介
     private String chapterUrl;//目录URL
+    public String wordCount;
     private Long addTime = 0L;
-    private Long upTime = 0L;
-    private String variable;
 
     @Transient
     private Boolean isCurrentSource = false;
@@ -40,6 +41,9 @@ public class SearchBookBean implements BaseBookBean {
     private int searchTime = Integer.MAX_VALUE;
     @Transient
     private LinkedHashSet<String> originUrls;
+    private Long upTime = 0L;
+    @Transient
+    private String variable = "";
     @Transient
     private Map<String, String> variableMap;
     @Transient
@@ -54,10 +58,9 @@ public class SearchBookBean implements BaseBookBean {
         this.origin = origin;
     }
 
-    @Generated(hash = 337890066)
-    public SearchBookBean(String noteUrl, String coverUrl, String name, String author, String tag, String kind,
-                          String origin, String lastChapter, String introduce, String chapterUrl, Long addTime, Long upTime,
-                          String variable) {
+    @Generated(hash = 119917703)
+    public SearchBookBean(String noteUrl, String coverUrl, String name, String author, String tag, String kind, String origin,
+            String lastChapter, String introduce, String chapterUrl, String wordCount, Long addTime, Long upTime) {
         this.noteUrl = noteUrl;
         this.coverUrl = coverUrl;
         this.name = name;
@@ -68,9 +71,9 @@ public class SearchBookBean implements BaseBookBean {
         this.lastChapter = lastChapter;
         this.introduce = introduce;
         this.chapterUrl = chapterUrl;
+        this.wordCount = wordCount;
         this.addTime = addTime;
         this.upTime = upTime;
-        this.variable = variable;
     }
 
     @Override
@@ -86,10 +89,13 @@ public class SearchBookBean implements BaseBookBean {
     @Override
     public void putVariable(String key, String value) {
         if (variableMap == null) {
+            variableMap = JsonUtils.gsonToMaps(variable);
+        }
+        if (variableMap == null) {
             variableMap = new HashMap<>();
         }
         variableMap.put(key, value);
-        variable = new Gson().toJson(variableMap);
+        variable = JsonUtils.objectToJson(variableMap);
     }
 
     @Override
@@ -123,26 +129,34 @@ public class SearchBookBean implements BaseBookBean {
     }
 
     public void setName(String name) {
-        this.name = name != null ? name.trim().replaceAll("　", "") : null;
+        if (name != null) {
+            name = name.trim().replaceAll("　", "");
+            if (name.startsWith("《"))
+                name = name.replace("《", "").replace("》", "");
+        }
+        this.name = name;
     }
 
     public String getAuthor() {
-        if (author != null) {
-            if (author.startsWith("作者:") || author.startsWith("作者："))
-                author = author.substring(3).trim();
-        }
         return author;
     }
 
     public void setAuthor(String author) {
+        if (author != null) {
+            if (author.startsWith("作者:") || author.startsWith("作者："))
+                author = author.substring(3).trim();
+        }
         this.author = author;
     }
 
     public String getLastChapter() {
-        return lastChapter != null? lastChapter.equals("null")? "" : lastChapter.replace("\n", " ").trim() : null;
+        return lastChapter;
     }
 
     public void setLastChapter(String lastChapter) {
+        if (lastChapter != null) {
+            lastChapter = lastChapter.equals("null") ? "" : lastChapter.replace("\n", " ").trim();
+        }
         this.lastChapter = lastChapter;
 
     }
@@ -155,10 +169,13 @@ public class SearchBookBean implements BaseBookBean {
     }
 
     public String getKind() {
-        return kind != null? kind.replace("\n", " ").replace(",", " ").trim() : null;
+        return kind;
     }
 
     public void setKind(String kind) {
+        if (kind != null) {
+            kind = kind.replace("\n", " ").replace(",", " ").trim();
+        }
         this.kind = kind;
     }
 
@@ -230,7 +247,7 @@ public class SearchBookBean implements BaseBookBean {
 //        if (source != null)
 //            return source.getWeight();
 //        else
-            return 0;
+        return 0;
     }
 
     public int getSearchTime() {
@@ -267,5 +284,13 @@ public class SearchBookBean implements BaseBookBean {
         this.introduce = introduce;
         this.coverUrl = coverUrl;
         this.noteUrl = noteUrl;
+    }
+
+    public String getWordCount() {
+        return this.wordCount;
+    }
+
+    public void setWordCount(String wordCount) {
+        this.wordCount = wordCount;
     }
 }

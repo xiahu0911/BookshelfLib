@@ -13,7 +13,7 @@ public class DiscoveryKindBean {
     public String getKindName() {
 //        if (kindName != null)
 //            return kindName.replace(" ", "").trim();
-        return kindName;
+        return kindName == null? "" : kindName;
     }
 
     public void setKindName(String kindName) {

@@ -1,11 +1,11 @@
 package com.flyersoft.source.manager.analyzeRule;
 
 import android.annotation.SuppressLint;
-import android.support.annotation.Keep;
+import androidx.annotation.Keep;
 
 import com.flyersoft.source.bean.BaseBookBean;
 import com.flyersoft.source.manager.BaseModel;
-import com.flyersoft.source.manager.SourceModel2;
+import com.flyersoft.source.manager.SourceModel;
 import com.flyersoft.source.utils.NetworkUtils;
 import com.flyersoft.source.utils.StringUtils;
 import com.google.gson.Gson;
@@ -421,12 +421,6 @@ public class AnalyzeRule {
         } else if (StringUtils.startWithIgnoreCase(ruleStr, "@JSon:")) {
             mode = Mode.JSon;
             ruleStr = ruleStr.substring(6);
-        } else if (StringUtils.startWithIgnoreCase(ruleStr, "@JSon:")) {
-            mode = Mode.JSon;
-            ruleStr = ruleStr.substring(6);
-        } else if (StringUtils.startWithIgnoreCase(ruleStr, "@JSon:")) {
-            mode = Mode.JSon;
-            ruleStr = ruleStr.substring(6);
         } else {
             if (isJSON) {
                 mode = Mode.JSon;
@@ -530,7 +524,7 @@ public class AnalyzeRule {
             return null;
         }
         if (book.getVariableMap() == null) {
-            return null;
+            return "...";
         }
         return book.getVariableMap().get(key);
     }
@@ -552,7 +546,7 @@ public class AnalyzeRule {
      */
     public String ajax(String urlStr) {
         try {
-            urlStr = SourceModel2.toNewUrl(urlStr);
+            urlStr = SourceModel.toNewUrl(urlStr);
             AnalyzeUrl analyzeUrl = new AnalyzeUrl(urlStr);
             Response<String> response = BaseModel.getInstance().getResponseO(analyzeUrl)
                     .blockingFirst();

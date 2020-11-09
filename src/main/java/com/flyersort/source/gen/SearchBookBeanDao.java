@@ -34,9 +34,9 @@ public class SearchBookBeanDao extends AbstractDao<SearchBookBean, String> {
         public final static Property LastChapter = new Property(7, String.class, "lastChapter", false, "LAST_CHAPTER");
         public final static Property Introduce = new Property(8, String.class, "introduce", false, "INTRODUCE");
         public final static Property ChapterUrl = new Property(9, String.class, "chapterUrl", false, "CHAPTER_URL");
-        public final static Property AddTime = new Property(10, Long.class, "addTime", false, "ADD_TIME");
-        public final static Property UpTime = new Property(11, Long.class, "upTime", false, "UP_TIME");
-        public final static Property Variable = new Property(12, String.class, "variable", false, "VARIABLE");
+        public final static Property WordCount = new Property(10, String.class, "wordCount", false, "WORD_COUNT");
+        public final static Property AddTime = new Property(11, Long.class, "addTime", false, "ADD_TIME");
+        public final static Property UpTime = new Property(12, Long.class, "upTime", false, "UP_TIME");
     }
 
 
@@ -62,9 +62,9 @@ public class SearchBookBeanDao extends AbstractDao<SearchBookBean, String> {
                 "\"LAST_CHAPTER\" TEXT," + // 7: lastChapter
                 "\"INTRODUCE\" TEXT," + // 8: introduce
                 "\"CHAPTER_URL\" TEXT," + // 9: chapterUrl
-                "\"ADD_TIME\" INTEGER," + // 10: addTime
-                "\"UP_TIME\" INTEGER," + // 11: upTime
-                "\"VARIABLE\" TEXT);"); // 12: variable
+                "\"WORD_COUNT\" TEXT," + // 10: wordCount
+                "\"ADD_TIME\" INTEGER," + // 11: addTime
+                "\"UP_TIME\" INTEGER);"); // 12: upTime
     }
 
     /** Drops the underlying database table. */
@@ -127,19 +127,19 @@ public class SearchBookBeanDao extends AbstractDao<SearchBookBean, String> {
             stmt.bindString(10, chapterUrl);
         }
  
+        String wordCount = entity.getWordCount();
+        if (wordCount != null) {
+            stmt.bindString(11, wordCount);
+        }
+ 
         Long addTime = entity.getAddTime();
         if (addTime != null) {
-            stmt.bindLong(11, addTime);
+            stmt.bindLong(12, addTime);
         }
  
         Long upTime = entity.getUpTime();
         if (upTime != null) {
-            stmt.bindLong(12, upTime);
-        }
- 
-        String variable = entity.getVariable();
-        if (variable != null) {
-            stmt.bindString(13, variable);
+            stmt.bindLong(13, upTime);
         }
     }
 
@@ -197,19 +197,19 @@ public class SearchBookBeanDao extends AbstractDao<SearchBookBean, String> {
             stmt.bindString(10, chapterUrl);
         }
  
+        String wordCount = entity.getWordCount();
+        if (wordCount != null) {
+            stmt.bindString(11, wordCount);
+        }
+ 
         Long addTime = entity.getAddTime();
         if (addTime != null) {
-            stmt.bindLong(11, addTime);
+            stmt.bindLong(12, addTime);
         }
  
         Long upTime = entity.getUpTime();
         if (upTime != null) {
-            stmt.bindLong(12, upTime);
-        }
- 
-        String variable = entity.getVariable();
-        if (variable != null) {
-            stmt.bindString(13, variable);
+            stmt.bindLong(13, upTime);
         }
     }
 
@@ -231,9 +231,9 @@ public class SearchBookBeanDao extends AbstractDao<SearchBookBean, String> {
             cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // lastChapter
             cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8), // introduce
             cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9), // chapterUrl
-            cursor.isNull(offset + 10) ? null : cursor.getLong(offset + 10), // addTime
-            cursor.isNull(offset + 11) ? null : cursor.getLong(offset + 11), // upTime
-            cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12) // variable
+            cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10), // wordCount
+            cursor.isNull(offset + 11) ? null : cursor.getLong(offset + 11), // addTime
+            cursor.isNull(offset + 12) ? null : cursor.getLong(offset + 12) // upTime
         );
         return entity;
     }
@@ -250,9 +250,9 @@ public class SearchBookBeanDao extends AbstractDao<SearchBookBean, String> {
         entity.setLastChapter(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
         entity.setIntroduce(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
         entity.setChapterUrl(cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9));
-        entity.setAddTime(cursor.isNull(offset + 10) ? null : cursor.getLong(offset + 10));
-        entity.setUpTime(cursor.isNull(offset + 11) ? null : cursor.getLong(offset + 11));
-        entity.setVariable(cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12));
+        entity.setWordCount(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
+        entity.setAddTime(cursor.isNull(offset + 11) ? null : cursor.getLong(offset + 11));
+        entity.setUpTime(cursor.isNull(offset + 12) ? null : cursor.getLong(offset + 12));
      }
     
     @Override

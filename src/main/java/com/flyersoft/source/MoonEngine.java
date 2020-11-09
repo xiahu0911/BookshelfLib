@@ -8,7 +8,7 @@ import com.flyersoft.source.bean.DiscoveryBean;
 import com.flyersoft.source.bean.SearchBookBean;
 import com.flyersoft.source.manager.BookModel;
 import com.flyersoft.source.manager.DiscoveryModel;
-import com.flyersoft.source.manager.SourceModel2;
+import com.flyersoft.source.manager.SourceModel;
 import com.flyersoft.source.manager.engine.SearchEngine;
 import com.flyersoft.source.manager.engine.TestEngine;
 
@@ -134,7 +134,7 @@ public class MoonEngine {
      * @return
      */
     public Observable<List<BookSource>> addSource(String url) {
-        return SourceModel2.importSource(url);
+        return SourceModel.importSource(url);
     }
 
     /**

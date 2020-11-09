@@ -13,10 +13,10 @@ import com.flyersoft.source.utils.SPUtils;
  */
 public class SourceApplication {
 
-    public static Application application;
+    public static Application INSTANCE;
 
     public static void init(Application application) {
-        SourceApplication.application = application;
+        SourceApplication.INSTANCE = application;
         //初始化数据库
         DaoController.init(application);
         //sp本地存储

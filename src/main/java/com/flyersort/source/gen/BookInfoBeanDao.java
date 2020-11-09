@@ -35,6 +35,9 @@ public class BookInfoBeanDao extends AbstractDao<BookInfoBean, String> {
         public final static Property Origin = new Property(8, String.class, "origin", false, "ORIGIN");
         public final static Property Charset = new Property(9, String.class, "charset", false, "CHARSET");
         public final static Property BookSourceType = new Property(10, String.class, "bookSourceType", false, "BOOK_SOURCE_TYPE");
+        public final static Property Kind = new Property(11, String.class, "kind", false, "KIND");
+        public final static Property WordCount = new Property(12, String.class, "wordCount", false, "WORD_COUNT");
+        public final static Property LatestChapterTitle = new Property(13, String.class, "latestChapterTitle", false, "LATEST_CHAPTER_TITLE");
     }
 
 
@@ -60,7 +63,10 @@ public class BookInfoBeanDao extends AbstractDao<BookInfoBean, String> {
                 "\"INTRODUCE\" TEXT," + // 7: introduce
                 "\"ORIGIN\" TEXT," + // 8: origin
                 "\"CHARSET\" TEXT," + // 9: charset
-                "\"BOOK_SOURCE_TYPE\" TEXT);"); // 10: bookSourceType
+                "\"BOOK_SOURCE_TYPE\" TEXT," + // 10: bookSourceType
+                "\"KIND\" TEXT," + // 11: kind
+                "\"WORD_COUNT\" TEXT," + // 12: wordCount
+                "\"LATEST_CHAPTER_TITLE\" TEXT);"); // 13: latestChapterTitle
     }
 
     /** Drops the underlying database table. */
@@ -123,6 +129,21 @@ public class BookInfoBeanDao extends AbstractDao<BookInfoBean, String> {
         if (bookSourceType != null) {
             stmt.bindString(11, bookSourceType);
         }
+ 
+        String kind = entity.getKind();
+        if (kind != null) {
+            stmt.bindString(12, kind);
+        }
+ 
+        String wordCount = entity.getWordCount();
+        if (wordCount != null) {
+            stmt.bindString(13, wordCount);
+        }
+ 
+        String latestChapterTitle = entity.getLatestChapterTitle();
+        if (latestChapterTitle != null) {
+            stmt.bindString(14, latestChapterTitle);
+        }
     }
 
     @Override
@@ -179,6 +200,21 @@ public class BookInfoBeanDao extends AbstractDao<BookInfoBean, String> {
         if (bookSourceType != null) {
             stmt.bindString(11, bookSourceType);
         }
+ 
+        String kind = entity.getKind();
+        if (kind != null) {
+            stmt.bindString(12, kind);
+        }
+ 
+        String wordCount = entity.getWordCount();
+        if (wordCount != null) {
+            stmt.bindString(13, wordCount);
+        }
+ 
+        String latestChapterTitle = entity.getLatestChapterTitle();
+        if (latestChapterTitle != null) {
+            stmt.bindString(14, latestChapterTitle);
+        }
     }
 
     @Override
@@ -199,7 +235,10 @@ public class BookInfoBeanDao extends AbstractDao<BookInfoBean, String> {
             cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // introduce
             cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8), // origin
             cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9), // charset
-            cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10) // bookSourceType
+            cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10), // bookSourceType
+            cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11), // kind
+            cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12), // wordCount
+            cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13) // latestChapterTitle
         );
         return entity;
     }
@@ -217,6 +256,9 @@ public class BookInfoBeanDao extends AbstractDao<BookInfoBean, String> {
         entity.setOrigin(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
         entity.setCharset(cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9));
         entity.setBookSourceType(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
+        entity.setKind(cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11));
+        entity.setWordCount(cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12));
+        entity.setLatestChapterTitle(cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13));
      }
     
     @Override

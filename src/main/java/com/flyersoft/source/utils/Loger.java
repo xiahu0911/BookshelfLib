@@ -23,6 +23,16 @@ public class Loger {
             Log.i(TAG, "======" + tmp + "======");
     }
 
+    /**
+     * 打印信息
+     *
+     * @param TAG 标签
+     * @param tmp 内容
+     */
+    public static void showLog(String TAG, String tmp, boolean xxx) {
+            Log.i(TAG, "======" + tmp + "======");
+    }
+
     public static void H(String tmp) {
         Log.i(TAG, "====== " + tmp + " ======");
     }
