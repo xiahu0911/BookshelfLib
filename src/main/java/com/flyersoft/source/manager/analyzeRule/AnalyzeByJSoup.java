@@ -38,7 +38,7 @@ public class AnalyzeByJSoup {
             } else {
                 element = Jsoup.parse(jxNode.value().toString());
             }
-        } else {
+        } else if (doc != null) {
             element = Jsoup.parse(doc.toString());
         }
         return this;

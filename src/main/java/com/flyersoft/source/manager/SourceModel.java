@@ -145,7 +145,7 @@ public class SourceModel extends BaseModel {
         }
         try {
             BookSource3 bookSource3 = JsonUtils.gsonToObject(jsonItem, BookSource3.class);
-            if (bookSource3 == null || bookSource3.getRuleToc() == null) {
+            if ((bookSource3 == null || bookSource3.getRuleToc() == null) && !bookSource3.getBookSourceType().equals("100")) {
                 //2.0直接导入
                 BookSource bookSource = JsonUtils.gsonToObject(jsonItem, BookSource.class);
                 //如果不是大师导出的源，需要设置一下来源
@@ -162,7 +162,7 @@ public class SourceModel extends BaseModel {
                 bookSource.setBookSourceGroup(bookSource3.getBookSourceGroup());
                 bookSource.setLoginUrl(bookSource3.getLoginUrl());
                 bookSource.setRuleBookUrlPattern(bookSource3.getBookUrlPattern());
-                bookSource.setSerialNumber(Integer.parseInt(bookSource3.getCustomOrder()));
+                bookSource.setSerialNumber(Integer.parseInt(bookSource3.getCustomOrder() == null ? "0" : bookSource3.getCustomOrder()));
                 bookSource.setHttpUserAgent(bookSource3.getHeader());
                 bookSource.setRuleSearchUrl(bookSource3.getSearchUrl());
                 bookSource.setRuleFindUrl(bookSource3.getExploreUrl());
@@ -187,62 +187,73 @@ public class SourceModel extends BaseModel {
                 bookSource.setRuleSearchUpdateTime(ruleSearch.getUpdateTime());
                 bookSource.setRuleSearchWordCount(ruleSearch.getWordCount());
                 //发现(如果发现规则不存在，则与搜索规则保持一致)
-                if (bookSource3.getRuleExplore() instanceof String) {
-                    s = JsonPath.parse(bookSource3.getRuleExplore().toString()).jsonString();
-                } else {
-                    s = JsonPath.parse(JsonUtils.objectToJson(bookSource3.getRuleExplore())).jsonString();
+                if (bookSource3.getRuleExplore() != null) {
+                    if (bookSource3.getRuleExplore() instanceof String) {
+                        s = JsonPath.parse(bookSource3.getRuleExplore().toString()).jsonString();
+                    } else {
+                        s = JsonPath.parse(JsonUtils.objectToJson(bookSource3.getRuleExplore())).jsonString();
+                    }
+                    ExploreRule exploreRule = JsonUtils.gsonToObject(s, ExploreRule.class);
+                    bookSource.setRuleFindList(exploreRule.getBookList());
+                    bookSource.setRuleFindName(exploreRule.getName());
+                    bookSource.setRuleFindAuthor(exploreRule.getAuthor());
+                    bookSource.setRuleFindIntroduce(exploreRule.getIntro());
+                    bookSource.setRuleFindKind(exploreRule.getKind());
+                    bookSource.setRuleFindNoteUrl(exploreRule.getBookUrl());
+                    bookSource.setRuleFindCoverUrl(exploreRule.getCoverUrl());
+                    bookSource.setRuleFindLastChapter(exploreRule.getLastChapter());
                 }
-                ExploreRule exploreRule = JsonUtils.gsonToObject(s, ExploreRule.class);
-                bookSource.setRuleFindList(exploreRule.getBookList());
-                bookSource.setRuleFindName(exploreRule.getName());
-                bookSource.setRuleFindAuthor(exploreRule.getAuthor());
-                bookSource.setRuleFindIntroduce(exploreRule.getIntro());
-                bookSource.setRuleFindKind(exploreRule.getKind());
-                bookSource.setRuleFindNoteUrl(exploreRule.getBookUrl());
-                bookSource.setRuleFindCoverUrl(exploreRule.getCoverUrl());
-                bookSource.setRuleFindLastChapter(exploreRule.getLastChapter());
                 //详情
-                if (bookSource3.getRuleBookInfo() instanceof String) {
-                    s = JsonPath.parse(bookSource3.getRuleBookInfo().toString()).jsonString();
-                } else {
-                    s = JsonPath.parse(JsonUtils.objectToJson(bookSource3.getRuleBookInfo())).jsonString();
+                if (bookSource3.getRuleBookInfo() != null) {
+                    if (bookSource3.getRuleBookInfo() instanceof String) {
+                        s = JsonPath.parse(bookSource3.getRuleBookInfo().toString()).jsonString();
+                    } else {
+                        s = JsonPath.parse(JsonUtils.objectToJson(bookSource3.getRuleBookInfo())).jsonString();
+                    }
+                    BookInfoRule bookInfoRule = JsonUtils.gsonToObject(s, BookInfoRule.class);
+                    bookSource.setRuleBookInfoInit(bookInfoRule.getInit());
+                    bookSource.setRuleBookName(bookInfoRule.getName());
+                    bookSource.setRuleBookAuthor(bookInfoRule.getAuthor());
+                    bookSource.setRuleIntroduce(bookInfoRule.getIntro());
+                    bookSource.setRuleBookKind(bookInfoRule.getKind());
+                    bookSource.setRuleCoverUrl(bookInfoRule.getCoverUrl());
+                    bookSource.setRuleBookLastChapter(bookInfoRule.getLastChapter());
+                    bookSource.setRuleChapterUrl(bookInfoRule.getTocUrl());
+                    bookSource.setRuleBookUpdateTime(bookInfoRule.getUpdateTime());
+                    bookSource.setRuleBookWordCount(bookInfoRule.getWordCount());
                 }
-                BookInfoRule bookInfoRule = JsonUtils.gsonToObject(s, BookInfoRule.class);
-                bookSource.setRuleBookInfoInit(bookInfoRule.getInit());
-                bookSource.setRuleBookName(bookInfoRule.getName());
-                bookSource.setRuleBookAuthor(bookInfoRule.getAuthor());
-                bookSource.setRuleIntroduce(bookInfoRule.getIntro());
-                bookSource.setRuleBookKind(bookInfoRule.getKind());
-                bookSource.setRuleCoverUrl(bookInfoRule.getCoverUrl());
-                bookSource.setRuleBookLastChapter(bookInfoRule.getLastChapter());
-                bookSource.setRuleChapterUrl(bookInfoRule.getTocUrl());
-                bookSource.setRuleBookUpdateTime(bookInfoRule.getUpdateTime());
-                bookSource.setRuleBookWordCount(bookInfoRule.getWordCount());
+
                 //章节
-                if (bookSource3.getRuleToc() instanceof String) {
-                    s = JsonPath.parse(bookSource3.getRuleToc().toString()).jsonString();
-                } else {
-                    s = JsonPath.parse(JsonUtils.objectToJson(bookSource3.getRuleToc())).jsonString();
+                if (bookSource3.getRuleToc() != null) {
+                    if (bookSource3.getRuleToc() instanceof String) {
+                        s = JsonPath.parse(bookSource3.getRuleToc().toString()).jsonString();
+                    } else {
+                        s = JsonPath.parse(JsonUtils.objectToJson(bookSource3.getRuleToc())).jsonString();
+                    }
+                    TocRule tocRule = JsonUtils.gsonToObject(s, TocRule.class);
+                    bookSource.setRuleChapterList(tocRule.getChapterList());
+                    bookSource.setRuleChapterName(tocRule.getChapterName());
+                    bookSource.setRuleContentUrl(tocRule.getChapterUrl());
+                    bookSource.setRuleChapterUrlNext(tocRule.getNextTocUrl());
+                    bookSource.setRuleChapterUpdateTime(tocRule.getUpdateTime());
+                    bookSource.setIsVip(tocRule.getIsVip());
                 }
-                TocRule tocRule = JsonUtils.gsonToObject(s, TocRule.class);
-                bookSource.setRuleChapterList(tocRule.getChapterList());
-                bookSource.setRuleChapterName(tocRule.getChapterName());
-                bookSource.setRuleContentUrl(tocRule.getChapterUrl());
-                bookSource.setRuleChapterUrlNext(tocRule.getNextTocUrl());
-                bookSource.setRuleChapterUpdateTime(tocRule.getUpdateTime());
-                bookSource.setIsVip(tocRule.getIsVip());
+
                 //内容
-                if (bookSource3.getRuleContent() instanceof String) {
-                    s = JsonPath.parse(bookSource3.getRuleContent().toString()).jsonString();
-                } else {
-                    s = JsonPath.parse(JsonUtils.objectToJson(bookSource3.getRuleContent())).jsonString();
+                if (bookSource3.getRuleContent() != null) {
+                    if (bookSource3.getRuleContent() instanceof String) {
+                        s = JsonPath.parse(bookSource3.getRuleContent().toString()).jsonString();
+                    } else {
+                        s = JsonPath.parse(JsonUtils.objectToJson(bookSource3.getRuleContent())).jsonString();
+                    }
+                    ContentRule contentRule = JsonUtils.gsonToObject(s, ContentRule.class);
+                    bookSource.setRuleBookContent(contentRule.getContent());
+                    bookSource.setRuleContentUrlNext(contentRule.getNextContentUrl());
+                    bookSource.setRuleBookContentSourceRegex(contentRule.getSourceRegex());
+                    bookSource.setRuleBookContentWebJs(contentRule.getWebJs());
+                    bookSource.setRuleBookContentReplaceRegex(contentRule.getReplaceRegex());
                 }
-                ContentRule contentRule = JsonUtils.gsonToObject(s, ContentRule.class);
-                bookSource.setRuleBookContent(contentRule.getContent());
-                bookSource.setRuleContentUrlNext(contentRule.getNextContentUrl());
-                bookSource.setRuleBookContentSourceRegex(contentRule.getSourceRegex());
-                bookSource.setRuleBookContentWebJs(contentRule.getWebJs());
-                bookSource.setRuleBookContentReplaceRegex(contentRule.getReplaceRegex());
+
                 return bookSource;
             }
         } catch (Exception e) {

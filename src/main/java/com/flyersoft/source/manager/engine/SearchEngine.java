@@ -40,28 +40,32 @@ public class SearchEngine {
         executorService = Executors.newFixedThreadPool(num);
         scheduler = Schedulers.from(executorService);
         compositeDisposable = new CompositeDisposable();
-        bookSources.clear();
-        List<BookSource> allSelect = SourceController.getInstance().getAllSelect();
-        for (BookSource bookSource : allSelect) {
-            if (bookSource.getEnable()) {
-                bookSources.add(bookSource);
-            }
-        }
+//        initSources(false);
     }
 
-    public synchronized void search(final String keyStr, final int page, final SearchEngineListener searchEngineListener) {
+    private void initSources(boolean downloadOnly) {
+        bookSources.clear();
+        List<BookSource> allSelect = downloadOnly ? SourceController.getInstance().getDownloadSelect() : SourceController.getInstance().getAllSelect();
+        bookSources.addAll(allSelect);
+    }
+
+    public synchronized void search(final String keyStr, boolean downloadOnly, final int page, final SearchEngineListener searchEngineListener) {
+        initSources(downloadOnly);
 
         if (bookSources.size() == 0) {
-            searchEngineListener.onError("没有选中任何源");
+//            searchEngineListener.onError("没有选中任何源");
+            searchEngineListener.onFinish();
+            return;
         }
 
-        for (BookSource bookSource : bookSources) {
+        for (final BookSource bookSource : bookSources) {
             final BookModel bookModel = BookModel.getInstance(bookSource.getBookSourceUrl());
             bookModel.searchBook(keyStr, page)
                     .timeout(15, TimeUnit.SECONDS)
                     .retryWhen(new Function<Observable<Throwable>, ObservableSource<?>>() {
                         //记录重试次数
                         int retryCount = 0;
+
                         @Override
                         public ObservableSource<?> apply(Observable<Throwable> throwableObservable) throws Exception {
                             return throwableObservable.flatMap(new Function<Throwable, ObservableSource<?>>() {
@@ -93,6 +97,9 @@ public class SearchEngine {
                         public void onNext(List<SearchBookBean> searchBookBeans) {
                             currentIndex++;
                             if (searchBookBeans != null && searchBookBeans.size() > 0) {
+                                for (SearchBookBean searchBookBean : searchBookBeans) {
+                                    searchBookBean.setType(bookSource.getBookSourceType());
+                                }
                                 searchEngineListener.onSuccess(searchBookBeans);
                             }
                             if (currentIndex == bookSources.size()) {

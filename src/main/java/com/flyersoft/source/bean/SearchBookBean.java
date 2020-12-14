@@ -1,23 +1,14 @@
 package com.flyersoft.source.bean;
 
 import com.flyersoft.source.utils.JsonUtils;
-import com.google.gson.Gson;
 
-import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
-import org.greenrobot.greendao.annotation.Id;
-import org.greenrobot.greendao.annotation.Transient;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 
-import static com.flyersoft.source.conf.Consts.MAP_STRING;
-
-@Entity
 public class SearchBookBean implements BaseBookBean {
-    @Id
     private String noteUrl;
     private String coverUrl;//封面URL
     private String name;
@@ -30,23 +21,16 @@ public class SearchBookBean implements BaseBookBean {
     private String chapterUrl;//目录URL
     public String wordCount;
     private Long addTime = 0L;
+    private String type = "0";//对应源的sourceType
 
-    @Transient
     private Boolean isCurrentSource = false;
-    @Transient
     private int originNum = 1;
-    @Transient
     private int lastChapterNum = -2;
-    @Transient
     private int searchTime = Integer.MAX_VALUE;
-    @Transient
     private LinkedHashSet<String> originUrls;
     private Long upTime = 0L;
-    @Transient
     private String variable = "";
-    @Transient
     private Map<String, String> variableMap;
-    @Transient
     private String bookInfoHtml;
 
     public SearchBookBean() {
@@ -101,7 +85,7 @@ public class SearchBookBean implements BaseBookBean {
     @Override
     public Map<String, String> getVariableMap() {
         if (variableMap == null) {
-            return new Gson().fromJson(variable, MAP_STRING);
+            return JsonUtils.gsonToMaps(variable);
         }
         return variableMap;
     }
@@ -292,5 +276,17 @@ public class SearchBookBean implements BaseBookBean {
 
     public void setWordCount(String wordCount) {
         this.wordCount = wordCount;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public boolean isDownloadOnly(){
+        return getType().equals("100");
     }
 }

@@ -9,23 +9,23 @@ import com.flyersoft.source.yuedu3.AppConst.SCRIPT_ENGINE
 import com.flyersoft.source.yuedu3.AppPattern.JS_PATTERN
 import org.jsoup.nodes.Entities
 import org.mozilla.javascript.NativeObject
+import java.net.URL
 import java.util.*
 import java.util.regex.Pattern
 import javax.script.SimpleBindings
 import kotlin.collections.HashMap
 import kotlin.jvm.Throws
 
-
 /**
- * Created by REFGD.
- * 统一解析接口
+ * 解析规则获取结果
  */
 @Keep
-@Suppress("unused")
+@Suppress("unused", "RegExpRedundantEscape")
 class AnalyzeRule(var book: BaseBookBean? = null) : JsExtensions {
     var chapter: BookChapterBean? = null
     private var content: Any? = null
     private var baseUrl: String? = null
+    private var baseURL: URL? = null
     private var isJSON: Boolean = false
     private var isRegex: Boolean = false
 
@@ -37,16 +37,26 @@ class AnalyzeRule(var book: BaseBookBean? = null) : JsExtensions {
     private var objectChangedJS = false
     private var objectChangedJP = false
 
-    @Throws(Exception::class)
-    @JvmOverloads
-    fun setContent(content: Any?, baseUrl: String? = this.baseUrl): AnalyzeRule {
+    fun setContent(content: Any?, baseUrl: String? = null): AnalyzeRule {
         if (content == null) throw AssertionError("Content cannot be null")
-        isJSON = content.toString().isJson()
         this.content = content
-        this.baseUrl = baseUrl
+        setBaseUrl(baseUrl)
+        isJSON = content.toString().isJson()
         objectChangedXP = true
         objectChangedJS = true
         objectChangedJP = true
+        return this
+    }
+
+    fun setBaseUrl(baseUrl: String?): AnalyzeRule {
+        baseUrl?.let {
+            this.baseUrl = baseUrl
+            try {
+                baseURL = URL(baseUrl.substringBefore(","))
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
         return this
     }
 
@@ -55,17 +65,14 @@ class AnalyzeRule(var book: BaseBookBean? = null) : JsExtensions {
      */
     private fun getAnalyzeByXPath(o: Any): AnalyzeByXPath {
         return if (o != content) {
-            AnalyzeByXPath().parse(o)
-        } else getAnalyzeByXPath()
-    }
-
-    private fun getAnalyzeByXPath(): AnalyzeByXPath {
-        if (analyzeByXPath == null || objectChangedXP) {
-            analyzeByXPath = AnalyzeByXPath()
-            analyzeByXPath?.parse(content!!)
-            objectChangedXP = false
+            AnalyzeByXPath(o)
+        } else {
+            if (analyzeByXPath == null || objectChangedXP) {
+                analyzeByXPath = AnalyzeByXPath(content!!)
+                objectChangedXP = false
+            }
+            analyzeByXPath!!
         }
-        return analyzeByXPath as AnalyzeByXPath
     }
 
     /**
@@ -73,17 +80,14 @@ class AnalyzeRule(var book: BaseBookBean? = null) : JsExtensions {
      */
     private fun getAnalyzeByJSoup(o: Any): AnalyzeByJSoup {
         return if (o != content) {
-            AnalyzeByJSoup().parse(o)
-        } else getAnalyzeByJSoup()
-    }
-
-    private fun getAnalyzeByJSoup(): AnalyzeByJSoup {
-        if (analyzeByJSoup == null || objectChangedJS) {
-            analyzeByJSoup = AnalyzeByJSoup()
-            analyzeByJSoup?.parse(content!!)
-            objectChangedJS = false
+            AnalyzeByJSoup(o)
+        } else {
+            if (analyzeByJSoup == null || objectChangedJS) {
+                analyzeByJSoup = AnalyzeByJSoup(content!!)
+                objectChangedJS = false
+            }
+            analyzeByJSoup!!
         }
-        return analyzeByJSoup as AnalyzeByJSoup
     }
 
     /**
@@ -91,23 +95,19 @@ class AnalyzeRule(var book: BaseBookBean? = null) : JsExtensions {
      */
     private fun getAnalyzeByJSonPath(o: Any): AnalyzeByJSonPath {
         return if (o != content) {
-            AnalyzeByJSonPath().parse(o)
-        } else getAnalyzeByJSonPath()
-    }
-
-    private fun getAnalyzeByJSonPath(): AnalyzeByJSonPath {
-        if (analyzeByJSonPath == null || objectChangedJP) {
-            analyzeByJSonPath = AnalyzeByJSonPath()
-            analyzeByJSonPath?.parse(content!!)
-            objectChangedJP = false
+            AnalyzeByJSonPath(o)
+        } else {
+            if (analyzeByJSonPath == null || objectChangedJP) {
+                analyzeByJSonPath = AnalyzeByJSonPath(content!!)
+                objectChangedJP = false
+            }
+            analyzeByJSonPath!!
         }
-        return analyzeByJSonPath as AnalyzeByJSonPath
     }
 
     /**
      * 获取文本列表
      */
-    @Throws(Exception::class)
     @JvmOverloads
     fun getStringList(rule: String?, isUrl: Boolean = false): List<String>? {
         if (rule.isNullOrEmpty()) return null
@@ -115,7 +115,7 @@ class AnalyzeRule(var book: BaseBookBean? = null) : JsExtensions {
         return getStringList(ruleList, isUrl)
     }
 
-    @Throws(Exception::class)
+    @JvmOverloads
     fun getStringList(ruleList: List<SourceRule>, isUrl: Boolean = false): List<String>? {
         var result: Any? = null
         val content = this.content
@@ -158,7 +158,7 @@ class AnalyzeRule(var book: BaseBookBean? = null) : JsExtensions {
             val urlList = ArrayList<String>()
             if (result is List<*>) {
                 for (url in result as List<*>) {
-                    val absoluteURL = NetworkUtils.getAbsoluteURL(baseUrl, url.toString())
+                    val absoluteURL = NetworkUtils.getAbsoluteURL(baseURL, url.toString())
                     if (!absoluteURL.isNullOrEmpty() && !urlList.contains(absoluteURL)) {
                         urlList.add(absoluteURL)
                     }
@@ -173,14 +173,13 @@ class AnalyzeRule(var book: BaseBookBean? = null) : JsExtensions {
     /**
      * 获取文本
      */
-    @Throws(Exception::class)
+    @JvmOverloads
     fun getString(ruleStr: String?, isUrl: Boolean = false): String {
         if (TextUtils.isEmpty(ruleStr)) return ""
         val ruleList = splitSourceRule(ruleStr)
         return getString(ruleList, isUrl)
     }
 
-    @Throws(Exception::class)
     @JvmOverloads
     fun getString(ruleList: List<SourceRule>, isUrl: Boolean = false): String {
         var result: Any? = null
@@ -221,7 +220,11 @@ class AnalyzeRule(var book: BaseBookBean? = null) : JsExtensions {
             result.toString()
         }
         if (isUrl) {
-            return NetworkUtils.getAbsoluteURL(baseUrl, str) ?: ""
+            return if (str.isBlank()) {
+                baseUrl ?: ""
+            } else {
+                NetworkUtils.getAbsoluteURL(baseURL, str) ?: ""
+            }
         }
         return str
     }
@@ -229,7 +232,6 @@ class AnalyzeRule(var book: BaseBookBean? = null) : JsExtensions {
     /**
      * 获取Element
      */
-    @Throws(Exception::class)
     fun getElement(ruleStr: String): Any? {
         if (TextUtils.isEmpty(ruleStr)) return null
         var result: Any? = null
@@ -263,7 +265,6 @@ class AnalyzeRule(var book: BaseBookBean? = null) : JsExtensions {
      * 获取列表
      */
     @Suppress("UNCHECKED_CAST")
-    @Throws(Exception::class)
     fun getElements(ruleStr: String): List<Any> {
         var result: Any? = null
         val ruleList = splitSourceRule(ruleStr)
@@ -294,11 +295,9 @@ class AnalyzeRule(var book: BaseBookBean? = null) : JsExtensions {
         return ArrayList()
     }
 
-
     /**
      * 保存变量
      */
-    @Throws(Exception::class)
     private fun putRule(map: Map<String, String>) {
         for ((key, value) in map) {
             put(key, getString(value))
@@ -308,7 +307,6 @@ class AnalyzeRule(var book: BaseBookBean? = null) : JsExtensions {
     /**
      * 分离put规则
      */
-    @Throws(Exception::class)
     private fun splitPutRule(ruleStr: String, putMap: HashMap<String, String>): String {
         var vRuleStr = ruleStr
         val putMatcher = putPattern.matcher(vRuleStr)
@@ -344,7 +342,6 @@ class AnalyzeRule(var book: BaseBookBean? = null) : JsExtensions {
     /**
      * 分解规则生成规则列表
      */
-    @Throws(Exception::class)
     fun splitSourceRule(ruleStr: String?, mode: Mode = Mode.Default): List<SourceRule> {
         var vRuleStr = ruleStr
         val ruleList = ArrayList<SourceRule>()
@@ -604,10 +601,11 @@ class AnalyzeRule(var book: BaseBookBean? = null) : JsExtensions {
         return value
     }
 
+
     fun get(key: String): String {
         when (key) {
             "bookName" -> book?.let {
-                return "xxxx"
+                return "xxx"
             }
             "title" -> chapter?.let {
                 return it.title
@@ -624,6 +622,8 @@ class AnalyzeRule(var book: BaseBookBean? = null) : JsExtensions {
     private fun evalJS(jsStr: String, result: Any?): Any? {
         val bindings = SimpleBindings()
         bindings["java"] = this
+        bindings["cookie"] = CookieStore
+        bindings["cache"] = CacheManager
         bindings["book"] = book
         bindings["result"] = result
         bindings["baseUrl"] = baseUrl
@@ -666,4 +666,5 @@ class AnalyzeRule(var book: BaseBookBean? = null) : JsExtensions {
         private val regexPattern = Pattern.compile("\\$\\d{1,2}")
         private val titleNumPattern = Pattern.compile("(第)(.+?)(章)")
     }
+
 }

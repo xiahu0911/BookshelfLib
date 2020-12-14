@@ -36,6 +36,7 @@ public class BookSource {
     private Long lastUpdateTime;
     private int from;//用来标记书源的来源（0：默认阅读2.0; 1:阅读3.0）
     @Transient
+
     private boolean flyersoft;//标记是否大师导出的源
     @OrderBy
     private int serialNumber;
@@ -111,28 +112,28 @@ public class BookSource {
 
     @Generated(hash = 582031567)
     public BookSource(String bookSourceUrl, String bookSourceName,
-            String bookSourceGroup, String bookSourceType, String loginUrl,
-            Long lastUpdateTime, int from, int serialNumber, int weight,
-            boolean enable, String ruleFindUrl, String ruleFindList,
-            String ruleFindName, String ruleFindAuthor, String ruleFindKind,
-            String ruleFindIntroduce, String ruleFindLastChapter,
-            String ruleFindCoverUrl, String ruleFindNoteUrl,
-            String ruleFindUpdateTime, String ruleFindWordCount,
-            String ruleSearchUrl, String ruleSearchList, String ruleSearchName,
-            String ruleSearchAuthor, String ruleSearchKind,
-            String ruleSearchIntroduce, String ruleSearchLastChapter,
-            String ruleSearchCoverUrl, String ruleSearchNoteUrl,
-            String ruleSearchUpdateTime, String ruleSearchWordCount,
-            String ruleBookUrlPattern, String ruleBookInfoInit, String ruleBookName,
-            String ruleBookAuthor, String ruleBookUpdateTime,
-            String ruleBookWordCount, String ruleCoverUrl, String ruleIntroduce,
-            String ruleBookKind, String ruleBookLastChapter, String ruleChapterUrl,
-            String ruleChapterUrlNext, String ruleChapterList,
-            String ruleChapterName, String ruleChapterUpdateTime, String isVip,
-            String ruleContentUrl, String ruleContentUrlNext,
-            String ruleBookContent, String ruleBookContentSourceRegex,
-            String ruleBookContentWebJs, String ruleBookContentReplaceRegex,
-            String httpUserAgent) {
+                      String bookSourceGroup, String bookSourceType, String loginUrl,
+                      Long lastUpdateTime, int from, int serialNumber, int weight,
+                      boolean enable, String ruleFindUrl, String ruleFindList,
+                      String ruleFindName, String ruleFindAuthor, String ruleFindKind,
+                      String ruleFindIntroduce, String ruleFindLastChapter,
+                      String ruleFindCoverUrl, String ruleFindNoteUrl,
+                      String ruleFindUpdateTime, String ruleFindWordCount,
+                      String ruleSearchUrl, String ruleSearchList, String ruleSearchName,
+                      String ruleSearchAuthor, String ruleSearchKind,
+                      String ruleSearchIntroduce, String ruleSearchLastChapter,
+                      String ruleSearchCoverUrl, String ruleSearchNoteUrl,
+                      String ruleSearchUpdateTime, String ruleSearchWordCount,
+                      String ruleBookUrlPattern, String ruleBookInfoInit, String ruleBookName,
+                      String ruleBookAuthor, String ruleBookUpdateTime,
+                      String ruleBookWordCount, String ruleCoverUrl, String ruleIntroduce,
+                      String ruleBookKind, String ruleBookLastChapter, String ruleChapterUrl,
+                      String ruleChapterUrlNext, String ruleChapterList,
+                      String ruleChapterName, String ruleChapterUpdateTime, String isVip,
+                      String ruleContentUrl, String ruleContentUrlNext,
+                      String ruleBookContent, String ruleBookContentSourceRegex,
+                      String ruleBookContentWebJs, String ruleBookContentReplaceRegex,
+                      String httpUserAgent) {
         this.bookSourceUrl = bookSourceUrl;
         this.bookSourceName = bookSourceName;
         this.bookSourceGroup = bookSourceGroup;
@@ -215,7 +216,7 @@ public class BookSource {
     }
 
     public String getBookSourceType() {
-        return this.bookSourceType;
+        return this.bookSourceType == null ? "0" : this.bookSourceType;
     }
 
     public void setBookSourceType(String bookSourceType) {
@@ -615,6 +616,7 @@ public class BookSource {
 
     /**
      * 3.0发现列表规则转换
+     *
      * @return
      */
     public BookListRule getBookListRuleByFind() {
@@ -638,6 +640,7 @@ public class BookSource {
 
     /**
      * 3.0书籍详情规则转换
+     *
      * @return
      */
     public BookInfoRule getBookInfoRule() {
@@ -657,6 +660,7 @@ public class BookSource {
 
     /**
      * 3.0章节列表规则转换
+     *
      * @return
      */
     public TocRule getTocRule() {
@@ -672,6 +676,7 @@ public class BookSource {
 
     /**
      * 3.0内容规则转换
+     *
      * @return
      */
     public ContentRule getContentRule() {

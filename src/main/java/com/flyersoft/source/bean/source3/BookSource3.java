@@ -29,7 +29,7 @@ public class BookSource3 {
     private String bookSourceName;                // 名称
     private  String bookSourceGroup;            // 分组
     private  String bookSourceUrl;                 // 地址，包括 http/https
-    private  String bookSourceType;     // 类型，0 文本，1 音频
+    private  String bookSourceType = "0";     // 类型，0 文本，1 音频
     private  String bookUrlPattern;             // 详情页url正则
     private  String customOrder;                       // 手动排序编号
     private  boolean enabled;                    // 是否启用

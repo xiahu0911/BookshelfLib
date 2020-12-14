@@ -3,6 +3,8 @@ package com.flyersoft.source.dao;
 import com.flyersoft.source.bean.BookSource;
 import com.flyersort.source.gen.BookSourceDao;
 
+import org.greenrobot.greendao.query.QueryBuilder;
+
 import java.util.List;
 
 /**
@@ -50,6 +52,17 @@ public class SourceController {
     }
 
     /**
+     * 获取所有选中的下载源（按更新时间排序）
+     *
+     *
+     * @return
+     */
+    public List<BookSource> getDownloadSelect() {
+        QueryBuilder<BookSource> qb = DaoController.getInstance().bookSourceDao.queryBuilder();
+        return qb.where(qb.and(BookSourceDao.Properties.Enable.eq(true), BookSourceDao.Properties.BookSourceType.eq("100"))).orderAsc(BookSourceDao.Properties.Weight).list();
+    }
+
+    /**
      * 获取group
      *
      * @return
@@ -62,6 +75,7 @@ public class SourceController {
 
     /**
      * 批量插入/更新
+     *
      * @param bookSources
      */
     public void insertOrReplace(List<BookSource> bookSources) {
@@ -73,6 +87,7 @@ public class SourceController {
 
     /**
      * 更新单个源
+     *
      * @param bookSources
      */
     public void insertOrReplace(BookSource bookSources) {
@@ -84,6 +99,7 @@ public class SourceController {
 
     /**
      * 删除某个源
+     *
      * @param bookSources
      */
     public void deleteSource(BookSource bookSources) {
@@ -95,6 +111,7 @@ public class SourceController {
 
     /**
      * 批量删除
+     *
      * @param bookSources
      */
     public void deleteSource(List<BookSource> bookSources) {
@@ -106,6 +123,7 @@ public class SourceController {
 
     /**
      * 根据url进行查找
+     *
      * @param url
      * @return
      */

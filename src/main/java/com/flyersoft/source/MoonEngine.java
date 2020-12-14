@@ -9,7 +9,6 @@ import com.flyersoft.source.bean.SearchBookBean;
 import com.flyersoft.source.manager.BookModel;
 import com.flyersoft.source.manager.DiscoveryModel;
 import com.flyersoft.source.manager.SourceModel;
-import com.flyersoft.source.manager.engine.SearchEngine;
 import com.flyersoft.source.manager.engine.TestEngine;
 
 import java.util.List;
@@ -88,10 +87,12 @@ public class MoonEngine {
      * @param keyStr
      * @return
      */
+/*
     public void search(final String keyStr, final SearchEngine.SearchEngineListener searchEngineListener) {
         SearchEngine searchEngine = new SearchEngine(6);
         searchEngine.search(keyStr, 0, searchEngineListener);
     }
+*/
 
     /**
      * 获取书籍信息

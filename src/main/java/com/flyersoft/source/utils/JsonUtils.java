@@ -10,6 +10,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -94,6 +95,7 @@ public class JsonUtils {
     /**
      * 转成list
      * 解决泛型问题
+     *
      * @param json
      * @param cls
      * @param <T>
@@ -103,7 +105,7 @@ public class JsonUtils {
         Gson gson = new Gson();
         List<T> list = new ArrayList<T>();
         JsonArray array = new JsonParser().parse(json).getAsJsonArray();
-        for(final JsonElement elem : array){
+        for (final JsonElement elem : array) {
             list.add(gson.fromJson(elem, cls));
         }
         return list;
@@ -132,8 +134,8 @@ public class JsonUtils {
      * @return Map<String, T>
      */
     public static <T> Map<String, T> gsonToMaps(String json) {
-        Map<String, T> map = null;
-        if (gson != null) {
+        Map<String, T> map = new HashMap<>();
+        if (gson != null && StringUtils.isNotEmpty(json)) {
             map = gson.fromJson(json, new TypeToken<Map<String, T>>() {
             }.getType());
         }

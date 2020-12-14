@@ -1,6 +1,9 @@
 package com.flyersoft.source.yuedu3
 
 import android.annotation.SuppressLint
+import com.flyersoft.source.bean.BaseBookBean
+import com.flyersoft.source.bean.BookChapterBean
+import com.flyersoft.source.bean.BookInfoBean
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -36,5 +39,4 @@ object Debug {
     interface Callback {
         fun printLog(state: Int, msg: String)
     }
-
 }

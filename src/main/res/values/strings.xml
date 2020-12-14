@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="read_aloud_pause">朗读暂停</string>
+    <string name="read_aloud_timer">正在朗读(还剩%d分钟)</string>
+    <string name="ps_hide_navigation_bar">阅读界面隐藏虚拟按键</string>
+    <string name="refresh">刷新</string>
+    <string name="start">开始</string>
+    <string name="stop">停止</string>
+    <string name="pause">暂停</string>
+    <string name="resume">继续</string>
+    <string name="set_timer">定时</string>
+    <string name="read_aloud_s">点击打开阅读界面</string>
+    <string name="read_aloud_t">正在朗读</string>
+    <string name="tip_cannot_jump_setting_page">无法跳转至设置界面</string>
+    <string name="copy_complete">已拷贝</string>
+    <string name="cannot_empty">输入不能为空</string>
+    <string name="service_starting">正在启动服务</string>
+    <string name="http_ip">http://%1$s:%2$d</string>
+    <string name="cancel">取消</string>
+    <string name="web_service">Web 服务</string>
+</resources>

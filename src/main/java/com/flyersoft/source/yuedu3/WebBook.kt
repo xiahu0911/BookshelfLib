@@ -2,29 +2,28 @@ package com.flyersoft.source.yuedu3
 
 import com.flyersoft.source.bean.*
 import com.flyersoft.source.utils.Loger
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.*
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.coroutines.CoroutineContext
 
-class WebBook(val bookSource: BookSource) : CoroutineScope by MainScope() {
+class WebBook(val bookSource: BookSource) {
 
     private val sourceUrl: String
         get() = bookSource.bookSourceUrl
 
-    companion object{
+    companion object {
         private val variableBookMap = hashMapOf<String, SearchBookBean>()
     }
 
 
-    fun <T> execute(
-        scope: CoroutineScope = this,
-        context: CoroutineContext = Dispatchers.Default,
-        block: suspend CoroutineScope.() -> T
-    ): Coroutine<T> {
-        return Coroutine.async(scope, context) { block() }
-    }
+//    fun <T> execute(
+//        scope: CoroutineScope = this,
+//        context: CoroutineContext = Dispatchers.Default,
+//        block: suspend CoroutineScope.() -> T
+//    ): Coroutine<T> {
+//        return Coroutine.async(scope, context) { block() }
+//    }
 
 
     private fun getVariableBook(sourceUrl: String): SearchBookBean {
@@ -53,10 +52,15 @@ class WebBook(val bookSource: BookSource) : CoroutineScope by MainScope() {
                 book = getVariableBook(bookSource.bookSourceUrl),
                 headerMapF = Tools3.getHeaderMap(bookSource)
             )
-            execute {
+            var it = arrayListOf<SearchBookBean>()
+            runBlocking {
+                Loger.showLog(
+                    "xxxxx",
+                    Thread.currentThread().id.toString() + "：" + bookSource.bookSourceName
+                )
                 val res = analyzeUrl.getResponseAwait(bookSource.bookSourceUrl)
-                val it = BookList.analyzeBookList(
-                    this@WebBook,
+                it = BookList.analyzeBookList(
+                    this,
                     res.body,
                     bookSource,
                     analyzeUrl,
@@ -64,8 +68,8 @@ class WebBook(val bookSource: BookSource) : CoroutineScope by MainScope() {
                     getVariableBook(bookSource.bookSourceUrl),
                     true
                 )
-                callback.callBack(it)
             }
+            callback.callBack(it)
         } ?: callback.callBack(arrayListOf())
     }
 
@@ -84,10 +88,10 @@ class WebBook(val bookSource: BookSource) : CoroutineScope by MainScope() {
             book = getVariableBook(bookSource.bookSourceUrl),
             headerMapF = Tools3.getHeaderMap(bookSource)
         )
-        execute {
+        runBlocking {
             val res = analyzeUrl.getResponseAwait(bookSource.bookSourceUrl)
             val it = BookList.analyzeBookList(
-                this@WebBook,
+                this,
                 res.body,
                 bookSource,
                 analyzeUrl,
@@ -108,7 +112,7 @@ class WebBook(val bookSource: BookSource) : CoroutineScope by MainScope() {
     ) {
         book.bookSourceType = bookSource.bookSourceType
         if (!book.bookInfoHtml.isNullOrEmpty()) {
-            BookInfo.analyzeBookInfo(book, book.bookInfoHtml, bookSource, book.noteUrl)
+            BookInfo.analyzeBookInfo(book, book.bookInfoHtml, bookSource, book.noteUrl, false)
             callback.callBack(book)
         } else {
             val analyzeUrl = AnalyzeUrl(
@@ -117,9 +121,9 @@ class WebBook(val bookSource: BookSource) : CoroutineScope by MainScope() {
                 baseUrl = sourceUrl,
                 headerMapF = Tools3.getHeaderMap(bookSource)
             )
-            execute {
+            runBlocking {
                 val it = analyzeUrl.getResponseAwait(bookSource.bookSourceUrl)
-                BookInfo.analyzeBookInfo(book, it.body, bookSource, book.noteUrl)
+                BookInfo.analyzeBookInfo(book, it.body, bookSource, book.noteUrl, false)
                 callback.callBack(book)
             }
         }
@@ -132,12 +136,12 @@ class WebBook(val bookSource: BookSource) : CoroutineScope by MainScope() {
         book: BookInfoBean,
         callback: CallBack<List<BookChapterBean>>
     ) {
-        execute {
+        runBlocking {
             book.bookSourceType = bookSource.bookSourceType
             if (book.noteUrl == book.chapterUrl && !book.chapterListHtml.isNullOrEmpty()) {
                 callback.callBack(
                     BookChapterList.analyzeChapterList(
-                        this@WebBook,
+                        this,
                         book,
                         book.chapterListHtml,
                         bookSource,
@@ -153,7 +157,7 @@ class WebBook(val bookSource: BookSource) : CoroutineScope by MainScope() {
                 ).getResponseAwait(bookSource.bookSourceUrl);
                 callback.callBack(
                     BookChapterList.analyzeChapterList(
-                        this@WebBook,
+                        this,
                         book,
                         it.body,
                         bookSource,
@@ -175,7 +179,7 @@ class WebBook(val bookSource: BookSource) : CoroutineScope by MainScope() {
         callback: CallBack<String>
     ) {
         getContentSuspend(
-            this, book, bookChapter, nextChapterUrl, isTest, callback
+            book, bookChapter, nextChapterUrl, isTest, callback
         )
     }
 
@@ -183,15 +187,14 @@ class WebBook(val bookSource: BookSource) : CoroutineScope by MainScope() {
      * 章节内容
      */
     private fun getContentSuspend(
-        scope: CoroutineScope = Coroutine.DEFAULT,
         book: BookInfoBean,
         bookChapter: BookChapterBean,
         nextChapterUrl: String? = null,
         isTest: Boolean = false,
         callback: CallBack<String>
     ) {
-        execute {
-            if (bookSource.getContentRule().content.isNullOrEmpty()) {
+        runBlocking {
+            if (bookSource.contentRule.content.isNullOrEmpty()) {
                 Loger.H(sourceUrl + "⇒正文规则为空,使用章节链接:${bookChapter.url}")
                 callback.callBack(bookChapter.url)
             }
@@ -203,18 +206,18 @@ class WebBook(val bookSource: BookSource) : CoroutineScope by MainScope() {
                         AnalyzeUrl(
                             book = book,
                             ruleUrl = bookChapter.url,
-                            baseUrl = book.chapterUrl,
+                            baseUrl = book.chapterUrl?.let { it } ?: book.noteUrl,
                             headerMapF = Tools3.getHeaderMap(bookSource)
                         )
                     analyzeUrl.getResponseAwait(
                         bookSource.bookSourceUrl,
-                        jsStr = bookSource.getContentRule().webJs,
-                        sourceRegex = bookSource.getContentRule().sourceRegex
+                        jsStr = bookSource.contentRule.webJs,
+                        sourceRegex = bookSource.contentRule.sourceRegex
                     ).body
                 }
             callback.callBack(
                 BookContent.analyzeContent(
-                    scope,
+                    this,
                     body,
                     book,
                     bookChapter,

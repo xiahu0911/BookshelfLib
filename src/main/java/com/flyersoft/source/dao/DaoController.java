@@ -7,9 +7,11 @@ import com.flyersoft.source.bean.BookSource;
 import com.flyersoft.source.utils.Loger;
 import com.flyersoft.source.utils.Toaster;
 import com.flyersort.source.gen.BookSourceDao;
+import com.flyersort.source.gen.CacheDao;
 import com.flyersort.source.gen.CookieBeanDao;
 import com.flyersort.source.gen.DaoMaster;
 import com.flyersort.source.gen.DaoSession;
+import com.flyersort.source.gen.HttpTTSDao;
 
 import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.internal.DaoConfig;
@@ -29,6 +31,8 @@ public class DaoController {
 
     public BookSourceDao bookSourceDao;
     public CookieBeanDao cookieBeanDao;
+    public CacheDao cacheDao;
+    public HttpTTSDao httpTTSDao;
 
     private DaoController() {
     }
@@ -74,6 +78,8 @@ public class DaoController {
 
         bookSourceDao = daoSession.getBookSourceDao();
         cookieBeanDao = daoSession.getCookieBeanDao();
+        cacheDao = daoSession.getCacheDao();
+        httpTTSDao = daoSession.getHttpTTSDao();
     }
 
     public static void init(Context context) {

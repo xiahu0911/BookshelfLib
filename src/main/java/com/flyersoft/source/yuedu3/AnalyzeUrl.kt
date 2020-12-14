@@ -6,6 +6,8 @@ import androidx.annotation.Keep
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.model.LazyHeaders
 import com.flyersoft.source.bean.BaseBookBean
+import com.flyersoft.source.bean.BookChapterBean
+import com.flyersoft.source.conf.AppConfig
 import com.flyersoft.source.yuedu3.AppConst.SCRIPT_ENGINE
 import com.flyersoft.source.yuedu3.AppConst.UA_NAME
 import com.flyersoft.source.yuedu3.AppConst.userAgent
@@ -25,7 +27,6 @@ import javax.script.SimpleBindings
 import kotlin.coroutines.CoroutineContext
 import kotlin.jvm.Throws
 
-
 /**
  * Created by GKF on 2018/1/24.
  * 搜索URL规则解析
@@ -38,12 +39,14 @@ class AnalyzeUrl(
     val page: Int? = null,
     val speakText: String? = null,
     val speakSpeed: Int? = null,
-    headerMapF: Map<String, String>? = null,
     var baseUrl: String = "",
+    var useWebView: Boolean = false,
     val book: BaseBookBean? = null,
-    var useWebView: Boolean = false
+    val chapter: BookChapterBean? = null,
+    headerMapF: Map<String, String>? = null
 ) : JsExtensions {
     companion object {
+        val splitUrlRegex = Regex(",\\s*(?=\\{)")
         private val pagePattern = Pattern.compile("<(.*?)>")
         private val jsonType = MediaType.parse("application/json; charset=utf-8")
     }
@@ -51,15 +54,14 @@ class AnalyzeUrl(
     var url: String = ""
     val headerMap = HashMap<String, String>()
     var body: String? = null
+    var type: String? = null
     private lateinit var urlHasQuery: String
     private var queryStr: String? = null
     private val fieldMap = LinkedHashMap<String, String>()
     private var charset: String? = null
     private var requestBody: RequestBody? = null
     private var method = RequestMethod.GET
-    private val splitUrlRegex = Regex(",\\s*(?=\\{)")
     private var proxy: String? = null
-    private var type: String? = null
 
     init {
         baseUrl = baseUrl.split(splitUrlRegex, 1)[0]
@@ -135,18 +137,20 @@ class AnalyzeUrl(
         if (ruleUrl.contains("{{") && ruleUrl.contains("}}")) {
             var jsEval: Any
             val sb = StringBuffer()
-            val simpleBindings = SimpleBindings()
-            simpleBindings["java"] = this
-            simpleBindings["baseUrl"] = baseUrl
-            simpleBindings["page"] = page
-            simpleBindings["key"] = key
-            simpleBindings["speakText"] = speakText
-            simpleBindings["speakSpeed"] = speakSpeed
-            simpleBindings["book"] = book
+            val bindings = SimpleBindings()
+            bindings["java"] = this
+            bindings["cookie"] = CookieStore
+            bindings["cache"] = CacheManager
+            bindings["baseUrl"] = baseUrl
+            bindings["page"] = page
+            bindings["key"] = key
+            bindings["speakText"] = speakText
+            bindings["speakSpeed"] = speakSpeed
+            bindings["book"] = book
             val expMatcher = EXP_PATTERN.matcher(ruleUrl)
             while (expMatcher.find()) {
                 jsEval = expMatcher.group(1)?.let {
-                    SCRIPT_ENGINE.eval(it, simpleBindings)
+                    SCRIPT_ENGINE.eval(it, bindings)
                 } ?: ""
                 if (jsEval is String) {
                     expMatcher.appendReplacement(sb, jsEval)
@@ -203,7 +207,7 @@ class AnalyzeUrl(
             }
         }
         headerMap[UA_NAME] ?: let {
-            headerMap[UA_NAME] = userAgent
+            headerMap[UA_NAME] = AppConfig.userAgent
         }
         when (method) {
             RequestMethod.GET -> {
@@ -258,6 +262,8 @@ class AnalyzeUrl(
     private fun evalJS(jsStr: String, result: Any? = null): Any? {
         val bindings = SimpleBindings()
         bindings["java"] = this
+        bindings["cookie"] = CookieStore
+        bindings["cache"] = CacheManager
         bindings["page"] = page
         bindings["key"] = key
         bindings["speakText"] = speakText

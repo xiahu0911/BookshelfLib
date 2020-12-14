@@ -8,12 +8,13 @@ import java.net.URL
 import java.util.*
 import java.util.regex.Pattern
 
-@Suppress("unused")
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 object NetworkUtils {
     fun getUrl(response: Response<*>): String {
-        val networkResponse = response.raw().networkResponse()
-        return networkResponse?.request()?.url()?.toString()
-            ?: response.raw().request().url().toString()
+        response.raw().networkResponse()?.let {
+            return it.request().url().toString()
+        }
+        return response.raw().request().url().toString()
     }
 
     private val notNeedEncoding: BitSet by lazy {
@@ -90,6 +91,22 @@ object NetworkUtils {
         return relativeUrl
     }
 
+    /**
+     * 获取绝对地址
+     */
+    fun getAbsoluteURL(baseURL: URL?, relativePath: String): String? {
+        if (baseURL == null) return relativePath
+        var relativeUrl = relativePath
+        try {
+            val parseUrl = URL(baseURL, relativePath)
+            relativeUrl = parseUrl.toString()
+            return relativeUrl
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return relativeUrl
+    }
+
     fun getBaseUrl(url: String?): String? {
         if (url == null || !url.startsWith("http")) return null
         val index = url.indexOf("/", 9)
@@ -99,11 +116,10 @@ object NetworkUtils {
     }
 
     fun getSubDomain(url: String?): String {
-        var baseUrl = getBaseUrl(url)
-        if (baseUrl == null) return ""
+        val baseUrl = getBaseUrl(url) ?: return ""
         return if (baseUrl.indexOf(".") == baseUrl.lastIndexOf(".")) {
-            baseUrl.substring(baseUrl.lastIndexOf("/")+1)
-        } else baseUrl.substring(baseUrl.indexOf(".")+1)
+            baseUrl.substring(baseUrl.lastIndexOf("/") + 1)
+        } else baseUrl.substring(baseUrl.indexOf(".") + 1)
     }
 
     /**

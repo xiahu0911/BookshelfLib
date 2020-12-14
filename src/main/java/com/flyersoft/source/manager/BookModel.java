@@ -87,13 +87,14 @@ public class BookModel extends BaseModel {
                 public void subscribe(final ObservableEmitter<List<SearchBookBean>> emitter) throws Exception {
                     try {
                         WebBook webBook = new WebBook(bookSource);
-                        webBook.exploreBook(url, page, new CallBack<List<SearchBookBean>>() {
-                            @Override
-                            public void callBack(List<SearchBookBean> searchBookBeans) {
-                                emitter.onNext(searchBookBeans);
-                                emitter.onComplete();
-                            }
-                        });
+                        if (emitter != null && !emitter.isDisposed())
+                            webBook.exploreBook(url, page, new CallBack<List<SearchBookBean>>() {
+                                @Override
+                                public void callBack(List<SearchBookBean> searchBookBeans) {
+                                    emitter.onNext(searchBookBeans);
+                                    emitter.onComplete();
+                                }
+                            });
                     } catch (Exception e) {
                         emitter.onError(e);
                     }
@@ -153,14 +154,15 @@ public class BookModel extends BaseModel {
                     if (retryModel == SEARCH_MODEL_LOADMORE) {
                         p++;
                     }
-                    webBook.searchBook(content, p, new CallBack<List<SearchBookBean>>() {
-                        @Override
-                        public void callBack(List<SearchBookBean> searchBookBeans) {
-                            Loger.H("(" + bookSource.getBookSourceName() + ")当前线程：" + Thread.currentThread().getName());
-                            emitter.onNext(searchBookBeans);
-                            emitter.onComplete();
-                        }
-                    });
+                    if (emitter != null && !emitter.isDisposed())
+                        webBook.searchBook(content, p, new CallBack<List<SearchBookBean>>() {
+                            @Override
+                            public void callBack(List<SearchBookBean> searchBookBeans) {
+                                Loger.H("(" + bookSource.getBookSourceName() + ")当前线程：" + Thread.currentThread().getName());
+                                emitter.onNext(searchBookBeans);
+                                emitter.onComplete();
+                            }
+                        });
                 }
             });
         } else {
@@ -227,14 +229,15 @@ public class BookModel extends BaseModel {
                 public void subscribe(final ObservableEmitter<BookShelfBean> emitter) throws Exception {
                     try {
                         WebBook webBook = new WebBook(bookSource);
-                        webBook.getBookInfo(bookShelfBean.getBookInfoBean(), new CallBack<BookInfoBean>() {
-                            @Override
-                            public void callBack(BookInfoBean bookInfoBean) {
-                                bookShelfBean.setBookInfoBean(bookInfoBean);
-                                emitter.onNext(bookShelfBean);
-                                emitter.onComplete();
-                            }
-                        });
+                        if (emitter != null && !emitter.isDisposed())
+                            webBook.getBookInfo(bookShelfBean.getBookInfoBean(), new CallBack<BookInfoBean>() {
+                                @Override
+                                public void callBack(BookInfoBean bookInfoBean) {
+                                    bookShelfBean.setBookInfoBean(bookInfoBean);
+                                    emitter.onNext(bookShelfBean);
+                                    emitter.onComplete();
+                                }
+                            });
                     } catch (Exception e) {
                         emitter.onError(e);
                     }
@@ -282,13 +285,14 @@ public class BookModel extends BaseModel {
                 public void subscribe(final ObservableEmitter<List<BookChapterBean>> emitter) throws Exception {
                     try {
                         WebBook webBook = new WebBook(bookSource);
-                        webBook.getChapterList(bookShelfBean.getBookInfoBean(), new CallBack<List<BookChapterBean>>() {
-                            @Override
-                            public void callBack(List<BookChapterBean> bookChapterBeans) {
-                                emitter.onNext(bookChapterBeans);
-                                emitter.onComplete();
-                            }
-                        });
+                        if (emitter != null && !emitter.isDisposed())
+                            webBook.getChapterList(bookShelfBean.getBookInfoBean(), new CallBack<List<BookChapterBean>>() {
+                                @Override
+                                public void callBack(List<BookChapterBean> bookChapterBeans) {
+                                    emitter.onNext(bookChapterBeans);
+                                    emitter.onComplete();
+                                }
+                            });
                     } catch (Exception e) {
                         emitter.onError(e);
                     }
@@ -352,16 +356,17 @@ public class BookModel extends BaseModel {
                     try {
                         WebBook webBook = new WebBook(bookSource);
                         String nextUrl = nextChapterBean != null ? nextChapterBean.getUrl() : "";
-                        webBook.getContent(bookShelfBean.getBookInfoBean(), chapterBean, nextUrl, isTest, new CallBack<String>() {
-                            @Override
-                            public void callBack(String s) {
-                                BookContentBean bookContentBean = new BookContentBean();
-                                bookContentBean.setDurChapterContent(s);
-                                bookContentBean.setDurChapterUrl(chapterBean.getUrl());
-                                emitter.onNext(bookContentBean);
-                                emitter.onComplete();
-                            }
-                        });
+                        if (emitter != null && !emitter.isDisposed())
+                            webBook.getContent(bookShelfBean.getBookInfoBean(), chapterBean, nextUrl, isTest, new CallBack<String>() {
+                                @Override
+                                public void callBack(String s) {
+                                    BookContentBean bookContentBean = new BookContentBean();
+                                    bookContentBean.setDurChapterContent(s);
+                                    bookContentBean.setDurChapterUrl(chapterBean.getUrl());
+                                    emitter.onNext(bookContentBean);
+                                    emitter.onComplete();
+                                }
+                            });
                     } catch (Exception e) {
                         emitter.onError(e);
                     }

@@ -12,7 +12,7 @@ import kotlin.math.abs
 import kotlin.math.log10
 import kotlin.math.pow
 
-@Suppress("unused")
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 object StringUtils {
     private const val HOUR_OF_DAY = 24
     private const val DAY_OF_YESTERDAY = 2
@@ -45,6 +45,7 @@ object StringUtils {
     //将时间转换成日期
     fun dateConvert(time: Long, pattern: String): String {
         val date = Date(time)
+
         @SuppressLint("SimpleDateFormat")
         val format = SimpleDateFormat(pattern)
         return format.format(date)
@@ -292,7 +293,6 @@ object StringUtils {
         return buf.toString()
     }
 
-
     fun byteToHexString(bytes: ByteArray?): String {
         if (bytes == null) return ""
         val sb = StringBuilder(bytes.size * 2)
@@ -306,4 +306,17 @@ object StringUtils {
         return sb.toString()
     }
 
+    fun hexStringToByte(hexString: String): ByteArray? {
+        val hexStr = hexString.replace(" ", "")
+        val len = hexStr.length
+        val bytes = ByteArray(len / 2)
+        var i = 0
+        while (i < len) {
+            // 两位一组，表示一个字节,把这样表示的16进制字符串，还原成一个字节
+            bytes[i / 2] = ((Character.digit(hexString[i], 16) shl 4) +
+                    Character.digit(hexString[i + 1], 16)).toByte()
+            i += 2
+        }
+        return bytes
+    }
 }
