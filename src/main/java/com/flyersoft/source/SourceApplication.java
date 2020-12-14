@@ -19,6 +19,7 @@ public class SourceApplication {
 
     public static Application INSTANCE;
 
+
     public static void init(Application application) {
         SourceApplication.INSTANCE = application;
         //初始化数据库

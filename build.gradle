@@ -28,6 +28,7 @@ android {
     }
 }
 
+
 greendao {
     schemaVersion 3
     daoPackage 'com.flyersort.source.gen'
